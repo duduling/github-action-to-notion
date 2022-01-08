@@ -1,19 +1,28 @@
-on: [push]
-
+name: Notion2Github
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 jobs:
-  hello_world_job:
+  auto-sync-from-notion-to-github:
     runs-on: ubuntu-latest
-    name: A job to say hello
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
-      - name: Hello world action step
-        uses: ./ # Uses an action in the root directory
-        id: hello
+
+      - name: Notion2Github
+        uses: younho9/notion2github@v1.1.0
         with:
-          who-to-greet: "Mona the Octocat"
-      # Use the output from the `hello` step
-      - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+          database-url: "https://www.notion.so/r2v/8822097a6bbf48d29b59a208ec705008?v=ae35dd9e97194d4694e04584a4cd08f6"
+          docs-directory: /
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+
+      - name: Format documents
+        uses: creyD/prettier_action@v3.1
+        with:
+          prettier_options: --write ./*.md
+          commit_message: "docs: Update docs (auto)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
