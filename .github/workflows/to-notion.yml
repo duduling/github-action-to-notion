@@ -1,32 +1,20 @@
-name: "Automatically Merge PR"
-description: "Autometically Merge PR using custom PR label/ PR라벨을 이용해 자동으로 머지작업을 해줍니다"
-
-on:
-  push:
-    branches:
-      - main
-jobs:
-  inputs:
-    label-name:
-      description: The PR label name you want to use when merge PR automatically.
-      required: false
-      default: "automerge"
-    reviewers-number:
-      description: Number of reviewers needed to automatically merge the PR.
-      required: false
-      default: "1"
-    merge-method:
-      description: The merge method; merge, squash or rebase.
-      required: false
-      default: "merge"
-    github-token:
-      description: GitHub WebHook Secret Token
-      required: true
-
-  runs:
-    using: "node12"
-    main: "src/index.js"
-
-  branding:
-    icon: "git-merge"
-    color: "orange"
+name: "TOAST UI Checking url error using browserstack"
+description: "Checking url error using browserstack"
+inputs:
+  urls:
+    description: "urls"
+    required: true
+  global-error-log-variable:
+    description: "error log array variable name(ex: errorLogs)"
+    required: true
+    default: "errorLogs"
+  browserlist:
+    description: "browser list"
+    required: true
+    default: "ie10, ie11, safari, edge, chrome, firefox"
+runs:
+  using: "node12"
+  main: "dist/index.js"
+branding:
+  icon: "check-circle"
+  color: "blue"
