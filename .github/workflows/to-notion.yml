@@ -1,20 +1,50 @@
-name: "TOAST UI Checking url error using browserstack"
-description: "Checking url error using browserstack"
+name: "Automatically Merge PR"
+description: "Autometically Merge PR using custom PR label/ PR라벨을 이용해 자동으로 머지작업을 해줍니다"
+
+on:
+  push:
+    branches:
+      - main
+
 inputs:
-  urls:
-    description: "urls"
+  label-name:
+    description: The PR label name you want to use when merge PR automatically.
+    required: false
+    default: "automerge"
+  reviewers-number:
+    description: Number of reviewers needed to automatically merge the PR.
+    required: false
+    default: "1"
+  merge-method:
+    description: The merge method; merge, squash or rebase.
+    required: false
+    default: "merge"
+  github-token:
+    description: GitHub WebHook Secret Token
     required: true
-  global-error-log-variable:
-    description: "error log array variable name(ex: errorLogs)"
-    required: true
-    default: "errorLogs"
-  browserlist:
-    description: "browser list"
-    required: true
-    default: "ie10, ie11, safari, edge, chrome, firefox"
-runs:
-  using: "node12"
-  main: "dist/index.js"
-branding:
-  icon: "check-circle"
-  color: "blue"
+
+jobs:
+  build:
+    # Ubuntu, Windows, MacOS를 지원한다.
+    runs-on: ubuntu-latest
+
+    # 영상에서도 소개됐는데, 변수 개념으로 생각하면 된다.
+    # node-version 과 같이 배열로 돼있으면, 해당 원소를 순회하면서 작업이 반복해서 실행된다.
+    # matrix 때문인지 배열만 되는 것 같다. (TODO)
+    # 응용해서 runs-on에 여러 OS에서 돌릴 수도 있다.
+    strategy:
+      matrix:
+        node-version: [14.x] # 템플릿 기본값: [10.x, 12.x, 14.x]
+
+    # uses 개념은 다른 사람이 작성한 내용을 실행하는 개념이다.
+    # actions/checkout: GitHub의 마지막 커밋으로 Checkout 한다.
+    # actions/setup-node: Node.js를 설치한다.
+    # run 개념은 명령어를 실행한다. 셸 스크립트와 동일하다.
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: node index.js
